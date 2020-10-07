@@ -29,6 +29,11 @@ app.get("*", function(req, res) {
   res.sendFile(path.join(__dirname, "..", "public/index.html"));
 });
 
+//extremely unlikely to return a duplicate value under any real scenario
+const getID = () => {
+  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+}
+
 // Starts the server to begin listening
 // =============================================================
 app.listen(PORT, function() {
