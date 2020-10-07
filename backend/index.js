@@ -38,7 +38,6 @@ app.post("/api/notes", function(req, res) {
     let note = req.body;
     note.id = getID();
     obj.push(note);
-    // data=JSON.stringify(obj);
     fs.writeFile(path.join(__dirname, "..", "db/db.json"), JSON.stringify(obj), "utf-8", (err) => {
       if(err) console.log(err);
     });
@@ -61,7 +60,7 @@ app.delete("/api/notes/:id", function(req, res) {
   })
 });
 
-//extremely unlikely to return a duplicate value under any real scenario
+//get an id for the note
 const getID = () => {
   return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 }
