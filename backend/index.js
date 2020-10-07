@@ -16,6 +16,14 @@ app.get("/notes", function(req, res) {
   res.sendFile(path.join(__dirname, "..", "public/notes.html"));
 });
 
+//notes data
+app.get("/api/notes", function(req, res) {
+  fs.readFile(path.join(__dirname, "..", "db/db.json"),"utf-8",(err,data) => {
+    if(err) console.log(err);
+    res.json(JSON.parse(data));
+  })
+});
+
 //default page
 app.get("*", function(req, res) {
   res.sendFile(path.join(__dirname, "..", "public/index.html"));
