@@ -8,11 +8,12 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
-
+console.log(__dirname)
 // Routes
 // ===========================================================
 //notes page
 app.get("/notes", function(req, res) {
+  console.log(__dirname)
   res.sendFile(path.join(__dirname, "..", "public/notes.html"));
 });
 
@@ -32,38 +33,43 @@ app.get("*", function(req, res) {
 //add note
 app.post("/api/notes", function(req, res) {
   fs.readFile(path.join(__dirname, "..", "db/db.json"),"utf-8",(err,data) => {
-    if(err) throw err;
-    
+    if(err) {
+      console.log(err);
+      res.send(false);
+    }
     let obj = JSON.parse(data);
     let note = req.body;
-    note.id = getID();
+    note.id = Date.now();
     obj.push(note);
     fs.writeFile(path.join(__dirname, "..", "db/db.json"), JSON.stringify(obj), "utf-8", (err) => {
-      if(err) console.log(err);
+      if(err) {
+        console.log(err);
+        res.send(false);
+      }
+      res.send(true);
     });
-    res.send(true);
   })
 });
 
 //delete note
 app.delete("/api/notes/:id", function(req, res) {
   fs.readFile(path.join(__dirname, "..", "db/db.json"),"utf-8",(err,data) => {
-    if(err) throw err;
-    let target = req.url.split("/");
-    target = target[target.length-1];
-    let obj = JSON.parse(data);
-    obj = obj.filter(el => el.id != target)
-    fs.writeFile(path.join(__dirname, "..", "db/db.json"), JSON.stringify(obj), "utf-8", (err) => {
-      if(err) console.log(err);
+    if(err) {
+      console.log(err);
+      res.send(false);
+    }
+    let target = req.params.id;
+    // let obj = JSON.parse(data);
+    // obj = obj.filter(el => el.id != target)
+    fs.writeFile(path.join(__dirname, "..", "db/db.json"), JSON.stringify(JSON.parse(data).filter(el => el.id != target)), "utf-8", (err) => {
+      if(err) {
+        console.log(err);
+        res.send(false);
+      }
+      res.send(true);
     });
-    res.send(true);
   })
 });
-
-//get an id for the note
-const getID = () => {
-  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-}
 
 // Starts the server to begin listening
 // =============================================================
